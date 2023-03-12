@@ -6,6 +6,7 @@ function TransactionTable({txns}) {
   const [selectedDate, setSelectedDate] = useState();
 
   const sort = () => {
+    console.log('I was here');
     const compare = (a: any, b: any) => {
       const amountA = Number(a.amount);
       const amountB = Number(b.amount);
@@ -18,7 +19,9 @@ function TransactionTable({txns}) {
       }
       return comparison;
     };
-    tansData.sort(compare);
+    const k = [...tansData.sort(compare)];
+    setTansData(k);
+    console.log('I was hereeee', k);
   };
 
   const listTransaction = (trans: any, index: number) => {
@@ -31,11 +34,31 @@ function TransactionTable({txns}) {
     );
   };
 
+  const listTransaction2 = () => {
+    return tansData.map((trans: any, index: number) => {
+      return (
+        <View key={index} style={{flexDirection: 'row'}} testID={trans.balance}>
+          <Text>{trans.date}</Text>
+          <Text>{trans.type === 1 ? 'Debit' : 'Credit'}</Text>
+          <Text>{trans.amount}</Text>
+        </View>
+      );
+    });
+  };
+
   const filterByDate = () => {
     if (!selectedDate) {
       setTansData(txns);
       return;
     }
+
+    const isADate = Date.parse(selectedDate) > 0 ? true : false;
+    console.log('isADate', isADate);
+    if (!isADate) {
+      setTansData(txns);
+      return;
+    }
+
     const newTrans = txns.filter(function (el: any) {
       if (el.date === selectedDate) {
         return el;
@@ -45,7 +68,7 @@ function TransactionTable({txns}) {
   };
 
   return (
-    <View style={{alignContent: 'center', marginTop: '50'}}>
+    <View style={{alignContent: 'center', marginTop: 50}}>
       <View
         style={{
           flexDirection: 'row',
@@ -62,7 +85,7 @@ function TransactionTable({txns}) {
         />
         <View>
           <Button
-            title="AFilterdd"
+            title="Filter"
             testID="submit-button"
             onPress={filterByDate}
           />
@@ -80,13 +103,14 @@ function TransactionTable({txns}) {
               </Text>
             </View>
             <View testID="records-body">
-              {tansData.length !== 0 ? (
+              {listTransaction2()}
+              {/* {tansData.length !== 0 ? (
                 <FlatList
                   data={tansData}
                   renderItem={({item, index}) => listTransaction(item, index)}
                   keyExtractor={(item, index) => index.toString()}
                 />
-              ) : null}
+              ) : null} */}
             </View>
           </View>
         </View>
